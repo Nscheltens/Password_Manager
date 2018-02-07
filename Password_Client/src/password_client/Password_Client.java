@@ -100,7 +100,7 @@ public class Password_Client extends JPanel implements ActionListener
     {
         JFrame.setDefaultLookAndFeelDecorated(false);
         JFrame fr = new JFrame("Password_Client");
-        fr.setContentPane(new Password_Client(800, 600, fr));
+        fr.setContentPane(new Password_Client(1000, 500, fr));
         fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fr.setLocation(10, 10);
         fr.setResizable(false);
