@@ -5,8 +5,10 @@
  */
 package password_client;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -15,6 +17,7 @@ import java.util.Queue;
 import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 
 /**
  *
@@ -27,9 +30,12 @@ public class Password_Client extends JPanel implements ActionListener
      */
     private ClientPanel CP;
     private LoginPanel LP;
+    private TestPanel TP;
     private String user,loginPass;
     private Queue<String> programs,usernames,passwords;
-    private static File pass = new File("Password.txt");
+    private static File pass = new File("C:\\Users\\Cole\\Documents\\GitHub\\Password_Manager\\Password_Client\\dist\\Password.txt");
+    private JSplitPane splitPaneH;
+    private static JPanel topPanel = new JPanel();
     
     public Password_Client(int w, int h, JFrame f)
     {
@@ -37,15 +43,35 @@ public class Password_Client extends JPanel implements ActionListener
         super.setPreferredSize(new Dimension(w, h));
         super.setBackground(new Color(225, 225, 225));
         
+        //JPanel topPanel = new JPanel();
+        //topPanel.setLayout(new BorderLayout());
+        //f.getContentPane().add(topPanel);
+        
+        splitPaneH = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Dimension d = tk.getScreenSize();
+        int width = d.width;
+        splitPaneH.setDividerLocation((width)/10);
+        
         CP = new ClientPanel(this);
-        CP.setBounds(0, 0, w, h);
-        super.add(CP);
+        //CP.setBounds(0, 0, w, h);
+        //super.add(CP);
         CP.setVisible(false);
         
+        TP = new TestPanel(this);
+        TP.setBounds(0, 0, w, h);
+        //super.add(TP);
+        TP.setVisible(true);
+        
         LP = new LoginPanel(this);
-        LP.setBounds(0, 0, w, h);
-        super.add(LP);
+        //LP.setBounds(0, 0, w, h);
+        splitPaneH.add(LP);
         LP.setVisible(true);
+          
+        splitPaneH.setLeftComponent(TP);
+        splitPaneH.setRightComponent(LP);
+        topPanel.add(splitPaneH);
+       
         
         programs = new LinkedList<>();
         usernames = new LinkedList<>();
@@ -94,13 +120,16 @@ public class Password_Client extends JPanel implements ActionListener
     }
     public void callClientPanel(){
         LP.setVisible(false);
-        CP.setVisible(true);
+        TP.setVisible(true);
+        //CP.setVisible(true);
     }
     public static void main(String[] args)
     {
         JFrame.setDefaultLookAndFeelDecorated(false);
         JFrame fr = new JFrame("Password_Client");
         fr.setContentPane(new Password_Client(1000, 500, fr));
+        topPanel.setLayout(new BorderLayout());
+        fr.getContentPane().add(topPanel);
         fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fr.setLocation(10, 10);
         fr.setResizable(false);
