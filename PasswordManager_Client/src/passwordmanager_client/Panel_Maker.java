@@ -27,6 +27,10 @@ public class Panel_Maker extends JPanel{
     private Boolean admin = false;
     private int width,height;
     
+    private javax.swing.JPasswordField LoginPassField;
+    javax.swing.JTextField LoginTextField;
+    javax.swing.JComboBox<String> AppPick;
+    
     /**
      * compartmentalize the panel tool
      * @param admin
@@ -175,8 +179,8 @@ public class Panel_Maker extends JPanel{
         JPanel log = new javax.swing.JPanel();
         log.setBackground(Color.GREEN);
         
-        javax.swing.JPasswordField LoginPassField = p.getPassFieldItem("Password");
-        javax.swing.JTextField LoginTextField = p.getFieldItem("Username");
+        LoginPassField = p.getPassFieldItem("Password");
+        LoginTextField = p.getFieldItem("Username");
         javax.swing.JLabel LoginLabel = p.getLabelItem("Login:");
         javax.swing.JButton LoginButton = new javax.swing.JButton();
         
@@ -311,7 +315,7 @@ public class Panel_Maker extends JPanel{
         JPanel Pan = new javax.swing.JPanel();
         
         javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
-        javax.swing.JComboBox<String> AppPick = p.getComboboxItem("App Select");
+        AppPick = p.getComboboxItem("App Select");
         javax.swing.JButton jButton1 = new javax.swing.JButton();
         javax.swing.JButton jButton2 = new javax.swing.JButton();
         
