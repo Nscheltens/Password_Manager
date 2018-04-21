@@ -30,6 +30,8 @@ public class Panel_Maker extends JPanel{
     private javax.swing.JPasswordField LoginPassField;
     javax.swing.JTextField LoginTextField;
     javax.swing.JComboBox<String> AppPick;
+    javax.swing.JList aList;
+    javax.swing.JScrollPane viewPane;
     
     /**
      * compartmentalize the panel tool
@@ -126,33 +128,41 @@ public class Panel_Maker extends JPanel{
     }
     
     /**
-    * add more content panels for main view port
-    * create panel Class as to be able to access various items on each Panel
-    */
-    
-    /**
-    * resize the Strings of the JList
-    */
-    private JPanel createContentPanel(Panel_Items p){
-        
+     * 
+     * @param p a collection of items on the panel
+     * @param content boolean to know if using as a content panel or user panel
+     * @return panel to be displayed
+     */
+    private JPanel createContentPanel(Panel_Items p, boolean content){
+        //placements for layout
         int p2width = width - (172);
         int p2height = (9*height)/10;
         
+        //Create Panel
         JPanel Pan = new javax.swing.JPanel();
-        Pan.setBackground(Color.CYAN);
         
-        javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
-        javax.swing.JComboBox<String> AppPick = p.getComboboxItem("Content");
-        jScrollPane1.setViewportView(p.getListItem("selectList"));
+        //Create all items to be added to the panel
+        viewPane = new javax.swing.JScrollPane();
+        AppPick = p.getComboboxItem("Content");
+        AppPick.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                if(content) AppPickContent(evt);
+                else AppPickUser(evt);
+            }
+        });
+        aList = p.getListItem("selectList");
+        aList.setFont(new java.awt.Font("Tahoma", 1, 18));
+        viewPane.setViewportView(aList);
+        //All elements created
         
-        
+        //Layout Panel
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(Pan);
         Pan.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1536, Short.MAX_VALUE)
+                .addComponent(viewPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1536, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(((p2width/2)- 150), ((p2width/2)- 150), ((p2width/2)- 150))
@@ -165,20 +175,22 @@ public class Panel_Maker extends JPanel{
                 .addContainerGap()
                 .addComponent(AppPick, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, ((p2height*86)/100), javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(viewPane, javax.swing.GroupLayout.PREFERRED_SIZE, ((p2height*86)/100), javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        return Pan;
+        return Pan; //Return panel
     }
     
     /**
-     * make layout dynamic, fix location issues
+     * 
+     * @param p a collection of items on the panel
+     * @return panel to be displayed
      */
     private JPanel createLogPanel(Panel_Items p){
-        
+        //Create Panel
         JPanel log = new javax.swing.JPanel();
-        log.setBackground(Color.GREEN);
         
+        //Create all items to be added to the panel
         LoginPassField = p.getPassFieldItem("Password");
         LoginTextField = p.getFieldItem("Username");
         javax.swing.JLabel LoginLabel = p.getLabelItem("Login:");
@@ -191,22 +203,24 @@ public class Panel_Maker extends JPanel{
                 LoginButtonActionPerformed(evt);
             }
         });
-
+        //All elements created
+        
+        //Layout Panel
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(log);
         log.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(578, 578, 578)
+                .addGap(600, 600, 600)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(LoginButton, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LoginPassField, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(LoginTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(754, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(520, 520, 520)
                 .addComponent(LoginLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(600, 600, 600))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -221,7 +235,7 @@ public class Panel_Maker extends JPanel{
                 .addComponent(LoginButton, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(321, 321, 321))
         );
-        return log;
+        return log; //Return panel
     }
     
     /**
@@ -269,8 +283,9 @@ public class Panel_Maker extends JPanel{
     }
     
     /**
-     * make dynamic sizable
-     * @return 
+     * 
+     * @param p a collection of items on the panel
+     * @return panel to be displayed
      */
     private JPanel createGroupsPanel(Panel_Items p){
         //Create Panel
@@ -279,7 +294,9 @@ public class Panel_Maker extends JPanel{
         //Create all items to be added to the panel
         javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
         javax.swing.JLabel groupLabel = p.getLabelItem("Groups");
-        jScrollPane1.setViewportView(p.getListItem("selectList"));
+        javax.swing.JList aList = p.getListItem("selectList");
+        aList.setFont(new java.awt.Font("Tahoma", 1, 18));
+        jScrollPane1.setViewportView(aList);
         //All elements created    
         
         //Layout Panel
@@ -376,6 +393,7 @@ public class Panel_Maker extends JPanel{
         JPanel Pan = new javax.swing.JPanel();
         
         javax.swing.JTextField jTextField3 = p.getFieldItem("Group Name");
+        jTextField3.setFont(new java.awt.Font("Tahoma", 1, 24));
         javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
         javax.swing.JScrollPane jScrollPane2 = new javax.swing.JScrollPane();
         javax.swing.JButton jButton1 = new javax.swing.JButton();
@@ -734,8 +752,12 @@ public class Panel_Maker extends JPanel{
     }
     
     /**
-    * have many options for different versions
-    */
+     * 
+     * @param buttonList list of strings(names of all buttons to add)
+     * @param returnpanel panel to return to after certain buttons are selected
+     * @param updatepanel int for certain functions in manager
+     * @return Panel on the bottom of the screen
+     */
     private JPanel createBotPanel(String[] buttonList, JPanel returnpanel, int updatepanel){
         JPanel Pan3 = new javax.swing.JPanel();
         Pan3.setBackground(Color.YELLOW);
@@ -747,11 +769,12 @@ public class Panel_Maker extends JPanel{
         
         return Pan3;
     }
-    
+
     /**
-    * make panel contents dynamic sized
-    * 
-    */
+     * 
+     * @param buttonList list of strings(names of all buttons to add)
+     * @return Panel on the left hand side
+     */
     private JPanel createSidePanel(String[] buttonList){
         
         JPanel Pan1 = new javax.swing.JPanel();
@@ -768,12 +791,18 @@ public class Panel_Maker extends JPanel{
         return Pan1;
     }
     
+    /**
+     * 
+     * @param name name of button to create
+     * @param f font of button
+     * @return button to add to the side panel
+     */
     private javax.swing.JButton makeButton(String name, Font f){
         javax.swing.JButton inButton = new javax.swing.JButton();
         inButton.setFont(f); // NOI18N
         inButton.setText(name);
         switch (name) {
-            case "Group":
+            case "Groups":
                 inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
                     JPanel panel = createGroupsPanel(manager.createGroupPanel());
                     sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"New", "Remove"}),panel, 0));
@@ -785,17 +814,25 @@ public class Panel_Maker extends JPanel{
                 }); break;
             case "Users":
                 inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-                    JPanel panel = createContentPanel(manager.createUsersPanel());
+                    JPanel panel = createContentPanel(manager.createUsersPanel(), false);
                     sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"New" , "Remove"}), panel, 1));
                 }); break;     
             default:
                 inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-                    JPanel panel = createContentPanel(manager.createContentPanel());
+                    JPanel panel = createContentPanel(manager.createContentPanel(name), true);
                     sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"Checkout"}), panel, 4));
                 }); break;
         }
         return inButton;
     }
+    /**
+     * 
+     * @param name name of button to create
+     * @param returnpanel panel to return to for actionlisteners
+     * @param f font of button
+     * @param panel int for certain functions in manager
+     * @return button to add to the bottom panel
+     */
     private javax.swing.JButton makeBotButton(String name,  JPanel returnpanel, Font f, int panel){
         javax.swing.JButton inButton = new javax.swing.JButton();
         inButton.setFont(f); // NOI18N
@@ -832,15 +869,24 @@ public class Panel_Maker extends JPanel{
         return inButton;
     }
     
+    
     private void LoginButtonActionPerformed(ActionEvent evt) {
-        splitPaneH.setLeftComponent(createSidePanel(new String[] {"Credentials", "Users", "Group", "Client View"}));
-        splitPaneV.setLeftComponent(createInfoPanel());
+        if(admin){
+            if(manager.checkLogin("user", "pass")){ //for debugging
+            //if(manager.checkLogin(LoginTextField.getText(), String.valueOf(LoginPassField.getPassword()))){
+                splitPaneH.setLeftComponent(createSidePanel(new String[] {"Credentials", "Users", "Groups", "Client View"}));
+                splitPaneV.setLeftComponent(createInfoPanel());
+            }
+        }
+        else{
+            if(manager.checkLogin(LoginTextField.getText(), String.valueOf(LoginPassField.getPassword()))){
+                splitPaneH.setLeftComponent(createSidePanel(manager.getAllGroups()));
+                splitPaneV.setLeftComponent(createInfoPanel());
+            }
+        }
     }
     private void sideButtonActionPerformed(ActionEvent evt, JPanel main , JPanel bot) {
         splitPaneV.setRightComponent(bot);
-        splitPaneV.setLeftComponent(main);
-    }
-    private void botButtonActionPerformed(ActionEvent evt, JPanel main) {
         splitPaneV.setLeftComponent(main);
     }
     
@@ -848,31 +894,64 @@ public class Panel_Maker extends JPanel{
         String removeItem = addList.getSelectedValue().toString();
         ((DefaultListModel)appList.getModel()).addElement(removeItem);
         ((DefaultListModel)addList.getModel()).removeElement(addList.getSelectedValue());
-    }
+    }   
     private void removeAllButtonActionPerformed(ActionEvent evt, javax.swing.JList appList, javax.swing.JList addList){
-            
+        javax.swing.DefaultListModel appMod = (DefaultListModel)addList.getModel();
+        for(Object part : appMod.toArray()){
+            ((DefaultListModel)appList.getModel()).addElement(part.toString());
+        }
+        addList.setModel(new javax.swing.DefaultListModel());
     }
     private void addButtonActionPerformed(ActionEvent evt, javax.swing.JList appList, javax.swing.JList addList){
         String addItem = appList.getSelectedValue().toString();
         ((DefaultListModel)addList.getModel()).addElement(addItem);
-        ((DefaultListModel)appList.getModel()).removeElement(addList.getSelectedValue());
+        ((DefaultListModel)appList.getModel()).removeElement(appList.getSelectedValue());
     }
     private void addAllButtonActionPerformed(ActionEvent evt, javax.swing.JList appList, javax.swing.JList addList){
-            
+        javax.swing.DefaultListModel appMod = (DefaultListModel)appList.getModel();
+        for(Object part : appMod.toArray()){
+            ((DefaultListModel)addList.getModel()).addElement(part.toString());
+        }
+        appList.setModel(new javax.swing.DefaultListModel());
     }
+    
     private void removeAppButtonActionPerformed(ActionEvent evt, javax.swing.JComboBox<String> appList){
             
     }
+    
     private void addAppButtonActionPerformed(ActionEvent evt, JPanel returnpanel, int panel){
         sideButtonActionPerformed(evt, createNewAppPanel(manager.createNewAppPanel()), createBotPanel((new String[] {"Done", "Cancel"}), returnpanel, panel));
     }
+    
     private void removeListButtonActionPerformed(ActionEvent evt, javax.swing.JList jList1){
             
     }
+    
     private void createButtonActionPerformed(ActionEvent evt, javax.swing.JList jList1, javax.swing.JTextField name){
         
     }
     private void createButtonActionPerformed(ActionEvent evt, javax.swing.JTextField field1, javax.swing.JTextField field2, javax.swing.JTextField field3){
         
+    }
+    
+    private void AppPickContent(ActionEvent evt){
+        javax.swing.JComboBox cb = (javax.swing.JComboBox)evt.getSource();
+        String app = (String)cb.getSelectedItem();
+        String[] creds = manager.getCredentials(app);
+        javax.swing.DefaultListModel listModel = new DefaultListModel();
+        for(String item : creds){
+            listModel.addElement(item);
+        }
+        aList.setModel(listModel);
+    }
+    private void AppPickUser(ActionEvent evt){
+        javax.swing.JComboBox cb = (javax.swing.JComboBox)evt.getSource();
+        String group = (String)cb.getSelectedItem();
+        String[] users = manager.getUsers(group);
+        javax.swing.DefaultListModel listModel = new DefaultListModel();
+        for(String item : users){
+            listModel.addElement(item);
+        }
+        aList.setModel(listModel);
     }
 }

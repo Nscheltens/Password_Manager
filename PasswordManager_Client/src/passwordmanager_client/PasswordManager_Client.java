@@ -23,19 +23,21 @@ public class PasswordManager_Client {
         
         return select;
     }
-    public Panel_Items createContentPanel(){
+    public Panel_Items createContentPanel(String group){
         
         Panel_Items content = new Panel_Items("content");
-        content.addListItem("selectList",getCredentials("app"));
-        content.addComboboxItem("Content", getApps("groups"));
+        String[] apps = getApps(group);
+        content.addListItem("selectList",getCredentials(apps[0]));
+        content.addComboboxItem("Content", apps);
         
         return content;
     }
     public Panel_Items createUsersPanel(){
         
         Panel_Items content = new Panel_Items("content");
-        content.addListItem("selectList",getUsers("group"));
-        content.addComboboxItem("Content", getAllGroups());
+        String[] groups = getAllGroups();
+        content.addListItem("selectList",getUsers(groups[0]));
+        content.addComboboxItem("Content", groups);
         
         return content;
     }
@@ -44,8 +46,8 @@ public class PasswordManager_Client {
         Panel_Items login = new Panel_Items("Login");
         
         login.addLabelItem("Login:","Login:");
-        login.addFieldItem("Username", false);
-        login.addFieldItem("Password", true);
+        login.addFieldItem("Username","Username", false);
+        login.addFieldItem("Password","Password", true);
         
         return login;
     }
@@ -57,20 +59,20 @@ public class PasswordManager_Client {
                 update.addLabelItem("Avaliable Apps","ListLabel");
                 update.addListItem("appList", getAllApps());
                 update.addListItem("inList", new String[] {});
-                update.addFieldItem("Group Name", false);
+                update.addFieldItem("Group Name", "Group Name", false);
                 
             case 1:
                 update.addLabelItem("Username","Fieldlabel");
                 update.addLabelItem("Avaliable Groups","ListLabel");
-                update.addListItem("appList", getAllApps());
+                update.addListItem("appList", getAllGroups());
                 update.addListItem("inList", new String[] {});
-                update.addFieldItem("Group Name", false);
+                update.addFieldItem("Group Name","Username", false);
         }
         update.addLabelItem("Group Name","llFieldlabel");
         update.addLabelItem("Avaliable Apps","llListLabel");
         update.addListItem("appList", getAllGroups());
         update.addListItem("inList", new String[] {});
-        update.addFieldItem("Group Name", false);
+        update.addFieldItem("Group Name", "Group Name", false);
         return update;
     }
     public Panel_Items createRemovePanel(int panel){
@@ -92,9 +94,9 @@ public class PasswordManager_Client {
         
         Panel_Items Newcred = new Panel_Items("NewCred");
         
-        Newcred.addFieldItem("username", false);
-        Newcred.addFieldItem("password", false);
-        Newcred.addFieldItem("CredName", false);
+        Newcred.addFieldItem("username", "username", false);
+        Newcred.addFieldItem("password", "password", false);
+        Newcred.addFieldItem("CredName", "CredName", false);
         
         Newcred.addLabelItem("Username","Userlabel");
         Newcred.addLabelItem("Password","Passlabel");
@@ -106,9 +108,9 @@ public class PasswordManager_Client {
         
         Panel_Items Newcred = new Panel_Items("NewCred");
         
-        Newcred.addFieldItem("FieldOne", false);
-        Newcred.addFieldItem("FieldTwo", false);
-        Newcred.addFieldItem("AppName", false);
+        Newcred.addFieldItem("FieldOne","FieldOne", false);
+        Newcred.addFieldItem("FieldTwo","FieldTwo", false);
+        Newcred.addFieldItem("AppName","AppName", false);
         
         Newcred.addLabelItem("Username","Userlabel");
         Newcred.addLabelItem("Password","Passlabel");
@@ -125,19 +127,36 @@ public class PasswordManager_Client {
         return cred;
     }*/
     
-    
-    private String[] getAllGroups(){
+    public boolean checkLogin(String user, String pass){
+        String username = getUsername();
+        String password = getPassword();
+        if(user.equals(username)){
+            if(pass.equals(password)){
+                return true;
+            }
+        }
+        return false;
+    }
+    private String getUsername(){
+        return "user";
+    }
+    private String getPassword(){
+        return "pass";
+    }
+    public String[] getAllGroups(){
         return new String[] {"Group One", "Group Two", "Group Three"};
     }
-    private String[] getUsers(String group){
+    public String[] getUsers(String group){
         return new String[] { "User 1", "User 2", "User 3", "User 4" };
     }
     private String[] getGroups(String user){
         return new String[] {"one", "Two", "THREE"};
     }
-    private String[] getCredentials(String App){
-        
-        return new String[] { "cred 1", "cred 2", "cred 3", "cred 4" };
+    public String[] getCredentials(String App){
+        if(App.equals("1")){
+            return new String[] { "cred 1", "cred 2", "cred 3", "cred 4", "extra"};    
+        }
+        else return new String[] { "cred 1", "cred 2", "cred 3", "cred 4" };
     }
     private String[] getApps(String group){
         
