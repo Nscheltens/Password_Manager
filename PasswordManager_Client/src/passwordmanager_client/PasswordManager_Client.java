@@ -75,10 +75,17 @@ public class PasswordManager_Client {
         update.addFieldItem("Group Name", "Group Name", false);
         return update;
     }
-    public Panel_Items createRemovePanel(int panel){
+    public Panel_Items createRemovePanel(int panel, String app){
         Panel_Items remove = new Panel_Items("remove");
         remove.addLabelItem("Items to remove","Items to remove");
-        remove.addListItem("appList", getAllApps());
+        switch(panel){
+            case 0:
+                remove.addListItem("appList", getAllGroups());
+            case 1:
+                remove.addListItem("appList", getAllUsers());
+            case 2:
+                remove.addListItem("appList", getCredentials(app));
+        }
         remove.addListItem("inList", new String[] {});
         return remove;
     }
@@ -119,6 +126,9 @@ public class PasswordManager_Client {
         return Newcred;
     }
     
+    public Panel_Items createInfoPanel(){
+        return null;
+    }
     /*public Panel_Items createCredPanel(){
         
         Panel_Items cred = new Panel_Items("content");
@@ -149,11 +159,14 @@ public class PasswordManager_Client {
     public String[] getUsers(String group){
         return new String[] { "User 1", "User 2", "User 3", "User 4" };
     }
+    public String[] getAllUsers(){
+        return new String[] { "User 1", "User 2", "User 3", "User 4","Me","boss","foo","bar" };
+    }
     private String[] getGroups(String user){
         return new String[] {"one", "Two", "THREE"};
     }
     public String[] getCredentials(String App){
-        if(App.equals("1")){
+        if(App.equals("App 2")){
             return new String[] { "cred 1", "cred 2", "cred 3", "cred 4", "extra"};    
         }
         else return new String[] { "cred 1", "cred 2", "cred 3", "cred 4" };

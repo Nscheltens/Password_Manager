@@ -350,8 +350,10 @@ public class Panel_Maker extends JPanel{
                 removeAppButtonActionPerformed(evt,AppPick);
             }
         });
-
-        jScrollPane1.setViewportView(p.getListItem("credPanel"));
+        
+        aList = p.getListItem("credPanel");
+        aList.setFont(new java.awt.Font("Tahoma", 1, 18));
+        jScrollPane1.setViewportView(aList);
         
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(Pan);
         Pan.setLayout(layout);
@@ -638,13 +640,14 @@ public class Panel_Maker extends JPanel{
     }
     
     /**
-     * make dynamic sizable
-     * @return 
+     * 
+     * @param p a collection of items on the panel
+     * @return panel to be displayed
      */
     private JPanel createRemovePanel(Panel_Items p){
-        
+        //Create Panel
         JPanel Pan = new javax.swing.JPanel();
-        
+        //Create all items to be added to the panel
         javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
         javax.swing.JScrollPane jScrollPane2 = new javax.swing.JScrollPane();
         javax.swing.JButton jButton1 = new javax.swing.JButton();
@@ -698,7 +701,9 @@ public class Panel_Maker extends JPanel{
         jScrollPane1.setViewportView(removeList);
 
         jScrollPane2.setViewportView(currentList);
+        //All elements created
 
+        //Layout Panel
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(Pan);
         Pan.setLayout(layout);
         layout.setHorizontalGroup(
@@ -748,7 +753,7 @@ public class Panel_Maker extends JPanel{
                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(310, Short.MAX_VALUE))
         );
-        return Pan;
+        return Pan; //Return panel
     }
     
     /**
@@ -760,7 +765,7 @@ public class Panel_Maker extends JPanel{
      */
     private JPanel createBotPanel(String[] buttonList, JPanel returnpanel, int updatepanel){
         JPanel Pan3 = new javax.swing.JPanel();
-        Pan3.setBackground(Color.YELLOW);
+        //Pan3.setBackground(Color.YELLOW);
         Pan3.setLayout(new FlowLayout());
         
         for(String buttonName : buttonList){
@@ -778,7 +783,7 @@ public class Panel_Maker extends JPanel{
     private JPanel createSidePanel(String[] buttonList){
         
         JPanel Pan1 = new javax.swing.JPanel();
-        Pan1.setBackground(Color.red);
+        //Pan1.setBackground(Color.red);
         Pan1.setLayout(new BoxLayout(Pan1, BoxLayout.PAGE_AXIS));
         
         for(String buttonName : buttonList){
@@ -851,7 +856,8 @@ public class Panel_Maker extends JPanel{
                 }
             case "Remove":
                 inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-                    sideButtonActionPerformed(evt, createRemovePanel(manager.createRemovePanel(panel)), createBotPanel((new String[] {"Done"}), returnpanel, 3));
+                    String app = (String)AppPick.getSelectedItem();
+                    sideButtonActionPerformed(evt, createRemovePanel(manager.createRemovePanel(panel,app)), createBotPanel((new String[] {"Done"}), returnpanel, 3));
                 }); break;
             case "Checkout":
                 inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
@@ -869,7 +875,10 @@ public class Panel_Maker extends JPanel{
         return inButton;
     }
     
-    
+    /**
+     * see CreateLoginPanel
+     * @param evt 
+     */
     private void LoginButtonActionPerformed(ActionEvent evt) {
         if(admin){
             if(manager.checkLogin("user", "pass")){ //for debugging
@@ -885,11 +894,23 @@ public class Panel_Maker extends JPanel{
             }
         }
     }
+    /**
+     * See makeButton and makeBotButton
+     * @param evt
+     * @param main primary panel display
+     * @param bot bottom panel display
+     */
     private void sideButtonActionPerformed(ActionEvent evt, JPanel main , JPanel bot) {
         splitPaneV.setRightComponent(bot);
         splitPaneV.setLeftComponent(main);
     }
     
+    /**
+     * navigation buttons for dual List
+     * @param evt
+     * @param appList current list of items in database
+     * @param addList list to add or remove to certain item in database
+     */
     private void removeButtonActionPerformed(ActionEvent evt, javax.swing.JList appList, javax.swing.JList addList){
         String removeItem = addList.getSelectedValue().toString();
         ((DefaultListModel)appList.getModel()).addElement(removeItem);
@@ -915,16 +936,40 @@ public class Panel_Maker extends JPanel{
         appList.setModel(new javax.swing.DefaultListModel());
     }
     
+    /**
+     * see createAppCredPanel
+     * @param evt
+     * @param appList combobox to remove from
+     */
     private void removeAppButtonActionPerformed(ActionEvent evt, javax.swing.JComboBox<String> appList){
-            
+        appList.removeItem((String)appList.getSelectedItem());
+        String app = (String)appList.getSelectedItem();
+        System.out.println(app);
+        String[] creds = manager.getCredentials(app);
+        javax.swing.DefaultListModel listModel = new DefaultListModel();
+        for(String item : creds){
+            listModel.addElement(item);
+        }
+        aList.setModel(listModel);
     }
     
+    /**
+     * see createAppCredPanel
+     * @param evt
+     * @param returnpanel panel to return to
+     * @param panel int for certain panels that need it
+     */
     private void addAppButtonActionPerformed(ActionEvent evt, JPanel returnpanel, int panel){
         sideButtonActionPerformed(evt, createNewAppPanel(manager.createNewAppPanel()), createBotPanel((new String[] {"Done", "Cancel"}), returnpanel, panel));
     }
     
+    /**
+     * see createRemovePanel
+     * @param evt
+     * @param jList1 list to remove from
+     */
     private void removeListButtonActionPerformed(ActionEvent evt, javax.swing.JList jList1){
-            
+        jList1.setModel(new javax.swing.DefaultListModel());
     }
     
     private void createButtonActionPerformed(ActionEvent evt, javax.swing.JList jList1, javax.swing.JTextField name){
@@ -933,7 +978,10 @@ public class Panel_Maker extends JPanel{
     private void createButtonActionPerformed(ActionEvent evt, javax.swing.JTextField field1, javax.swing.JTextField field2, javax.swing.JTextField field3){
         
     }
-    
+    /**
+     * 
+     * @param evt 
+     */
     private void AppPickContent(ActionEvent evt){
         javax.swing.JComboBox cb = (javax.swing.JComboBox)evt.getSource();
         String app = (String)cb.getSelectedItem();
@@ -944,6 +992,10 @@ public class Panel_Maker extends JPanel{
         }
         aList.setModel(listModel);
     }
+    /**
+     * 
+     * @param evt 
+     */
     private void AppPickUser(ActionEvent evt){
         javax.swing.JComboBox cb = (javax.swing.JComboBox)evt.getSource();
         String group = (String)cb.getSelectedItem();
