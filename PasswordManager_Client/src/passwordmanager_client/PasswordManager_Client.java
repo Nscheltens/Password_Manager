@@ -36,6 +36,7 @@ public class PasswordManager_Client {
         
         Panel_Items content = new Panel_Items("content");
         String[] apps = getApps(group);
+        //System.out.println(apps[0]);
         content.addListItem("selectList",getCredentials(apps[0]));
         content.addComboboxItem("Content", apps);
         return content;
@@ -88,7 +89,7 @@ public class PasswordManager_Client {
         */
         return update;
     }
-    public Panel_Items createRemovePanel(int panel, , String app)throws SQLException{
+    public Panel_Items createRemovePanel(int panel, String app)throws SQLException{
       
         Panel_Items remove = new Panel_Items("remove");
         remove.addLabelItem("Items to remove","Items to remove");
@@ -149,14 +150,27 @@ public class PasswordManager_Client {
         return cred;
     }*/
     
-    public boolean checkLogin(String user, String pass){
+    public boolean checkLogin(String user, String pass) throws SQLException{
+        String query =
+            "call login('"+user+"', '"+ pass+"')";
+        
         String username = getUsername();
         String password = getPassword();
+        
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+        while (rs.next()){
+            username = rs.getString("UserName");
+            password = rs.getString("Password");
+     }
+        //String username = getUsername();
+        //String password = getPassword();
         if(user.equals(username)){
             if(pass.equals(password)){
                 return true;
             }
         }
+        System.out.println("Wrong UserName or Password");
         return false;
     }
     private String getUsername(){
@@ -166,7 +180,7 @@ public class PasswordManager_Client {
         return "pass";
     }
     
-    private String[] getAllGroups()throws SQLException{
+    String[] getAllGroups()throws SQLException{
         String query =
         "SELECT GroupName " +
         "FROM groups ";
@@ -179,7 +193,7 @@ public class PasswordManager_Client {
      }
     return (String[]) a.toArray(new String[a.size()]);
     }
-    private String[] getUsers(String group) throws SQLException{
+    String[] getUsers(String group) throws SQLException{
         String query =
         "Select UserName "+
         "From users "+
@@ -193,7 +207,7 @@ public class PasswordManager_Client {
      }
       return (String[]) a.toArray(new String[a.size()]);
     }
-    private String[] getGroups(String user) throws SQLException{
+    String[] getGroups(String user) throws SQLException{
         String query =
             "call display_group('"+user+"')";
         ArrayList<String> a = new ArrayList<String>();
@@ -206,7 +220,7 @@ public class PasswordManager_Client {
         }
         return (String[]) a.toArray(new String[a.size()]);
     }
-    private String[] getCredentials(String App)throws SQLException{
+    String[] getCredentials(String App)throws SQLException{
         String query =
         "call display_apps('"+App+"')";
 
@@ -216,6 +230,8 @@ public class PasswordManager_Client {
       while (rs.next()){
        a.add(rs.getString("credID"));
      }
+     // String[] test = (String[]) a.toArray(new String[a.size()]);
+      //System.out.println([0]);
     return (String[]) a.toArray(new String[a.size()]);
    }
         
@@ -268,9 +284,23 @@ public class PasswordManager_Client {
             if(con != null){
             System.out.println("connected to database");
             }
-        }catch (Exception e){
+        }catch (SQLException e){
             throw new IllegalStateException("not connected", e);
         }
+    }
+
+    private String[] getAllUsers() throws SQLException {
+       String query =
+        "SELECT UserName " +
+        "FROM users ";
+
+    ArrayList<String> a = new ArrayList<String>();
+    Statement stmt = con.createStatement();
+    ResultSet rs = stmt.executeQuery(query);
+      while (rs.next()){
+       a.add(rs.getString("UserName"));
+     }
+    return (String[]) a.toArray(new String[a.size()]);
     }
 }
     
