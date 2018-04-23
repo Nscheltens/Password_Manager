@@ -148,8 +148,19 @@ public class PasswordManager_Client {
      }
     return (String[]) a.toArray(new String[a.size()]);
     }
-    private String[] getUsers(String group){
-        return new String[] { "User 1", "User 2", "User 3", "User 4" };
+    private String[] getUsers(String group) throws SQLException{
+        String query =
+        "Select UserName "+
+        "From users "+
+        "Where idUsers = (Select Users_idUsers From users_has_groups Where Groups_GroupName = '"+group+"')";
+
+    ArrayList<String> a = new ArrayList<String>();
+    Statement stmt = con.createStatement();
+    ResultSet rs = stmt.executeQuery(query);
+      while (rs.next()){
+       a.add(rs.getString("UserName"));
+     }
+      return (String[]) a.toArray(new String[a.size()]);
     }
     private String[] getGroups(String user) throws SQLException{
         String query =
