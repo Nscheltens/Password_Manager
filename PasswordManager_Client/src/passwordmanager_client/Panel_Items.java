@@ -130,7 +130,7 @@ public class Panel_Items {
         public javax.swing.JTextField field;
         public javax.swing.JPasswordField password;
         public String name;
-        public fieldItem(String n, String display,boolean pass){
+        public fieldItem(String n, String display, boolean pass){
             name = n;
             if (pass){
                 password = new javax.swing.JPasswordField();

@@ -12,7 +12,7 @@ package passwordmanager_client;
 public class PasswordManager_Client {
     
     public PasswordManager_Client(){
-        Panel_Maker ClientPanel = new Panel_Maker(true, this);
+        Panel_Maker ClientPanel = new Panel_Maker(false, this);
     }
     
     public Panel_Items createGroupPanel(){
@@ -67,12 +67,16 @@ public class PasswordManager_Client {
                 update.addListItem("appList", getAllGroups());
                 update.addListItem("inList", new String[] {});
                 update.addFieldItem("Group Name","Username", false);
+                update.addLabelItem("Password", "Password");
+                update.addFieldItem("Password Field","Password", false);
         }
+        /*
         update.addLabelItem("Group Name","llFieldlabel");
         update.addLabelItem("Avaliable Apps","llListLabel");
         update.addListItem("appList", getAllGroups());
         update.addListItem("inList", new String[] {});
         update.addFieldItem("Group Name", "Group Name", false);
+        */
         return update;
     }
     public Panel_Items createRemovePanel(int panel, String app){
@@ -115,9 +119,7 @@ public class PasswordManager_Client {
         
         Panel_Items Newcred = new Panel_Items("NewCred");
         
-        Newcred.addFieldItem("FieldOne","FieldOne", false);
-        Newcred.addFieldItem("FieldTwo","FieldTwo", false);
-        Newcred.addFieldItem("AppName","AppName", false);
+        Newcred.addFieldItem("AppName","Application Name", false);
         
         Newcred.addLabelItem("Username","Userlabel");
         Newcred.addLabelItem("Password","Passlabel");
