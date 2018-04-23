@@ -1,12 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package passwordmanager_client;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -146,8 +144,16 @@ public class Panel_Maker extends JPanel{
         AppPick = p.getComboboxItem("Content");
         AppPick.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if(content) AppPickContent(evt);
-                else AppPickUser(evt);
+                if(content) try {
+                    AppPickContent(evt);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                else try {
+                    AppPickUser(evt);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         aList = p.getListItem("selectList");
@@ -200,7 +206,11 @@ public class Panel_Maker extends JPanel{
         LoginButton.setText("GO!");
         LoginButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                LoginButtonActionPerformed(evt);
+                try {
+                    LoginButtonActionPerformed(evt);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         //All elements created
@@ -347,7 +357,11 @@ public class Panel_Maker extends JPanel{
         jButton2.setText("Remove");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeAppButtonActionPerformed(evt,AppPick);
+                try {
+                    removeAppButtonActionPerformed(evt,AppPick);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         
@@ -918,23 +932,39 @@ public class Panel_Maker extends JPanel{
         switch (name) {
             case "Groups":
                 inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-                    JPanel panel = createGroupsPanel(manager.createGroupPanel());
-                    sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"New", "Remove"}),panel, 0));
+            try {
+                JPanel panel = createGroupsPanel(manager.createGroupPanel());
+                sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"New", "Remove"}),panel, 0));
+            } catch (SQLException ex) {
+                Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+            }
                 }); break;
             case "Credentials":
                 inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-                    JPanel panel = createAppCredPanel(manager.createAppCredPanel());
-                    sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"New", "Remove"}), panel, 2));
+            try {
+                JPanel panel = createAppCredPanel(manager.createAppCredPanel());
+                sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"New", "Remove"}), panel, 2));
+            } catch (SQLException ex) {
+                Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+            }
                 }); break;
             case "Users":
                 inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-                    JPanel panel = createContentPanel(manager.createUsersPanel(), false);
-                    sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"New" , "Remove"}), panel, 1));
+            try {
+                JPanel panel = createContentPanel(manager.createUsersPanel(), false);
+                sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"New" , "Remove"}), panel, 1));
+            } catch (SQLException ex) {
+                Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+            }
                 }); break;     
             default:
                 inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-                    JPanel panel = createContentPanel(manager.createContentPanel(name), true);
-                    sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"Checkout"}), panel, 4));
+            try {
+                JPanel panel = createContentPanel(manager.createContentPanel(name), true);
+                sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"Checkout"}), panel, 4));
+            } catch (SQLException ex) {
+                Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+            }
                 }); break;
         }
         return inButton;
@@ -956,7 +986,11 @@ public class Panel_Maker extends JPanel{
                 switch(panel){
                     case 1:
                         inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-                            sideButtonActionPerformed(evt, createUserUpdatePanel(manager.createUpdatePanel(panel)), createBotPanel((new String[] {"Done", "Cancel"}), returnpanel, panel));
+            try {
+                sideButtonActionPerformed(evt, createUserUpdatePanel(manager.createUpdatePanel(panel)), createBotPanel((new String[] {"Done", "Cancel"}), returnpanel, panel));
+            } catch (SQLException ex) {
+                Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+            }
                         }); break;
                     case 2:
                         inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
@@ -964,7 +998,11 @@ public class Panel_Maker extends JPanel{
                         }); break;
                     default:
                         inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-                            sideButtonActionPerformed(evt, createUpdatePanel(manager.createUpdatePanel(panel)), createBotPanel((new String[] {"Done", "Cancel"}), returnpanel, panel));
+            try {
+                sideButtonActionPerformed(evt, createUpdatePanel(manager.createUpdatePanel(panel)), createBotPanel((new String[] {"Done", "Cancel"}), returnpanel, panel));
+            } catch (SQLException ex) {
+                Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+            }
                         }); break;
                 }
             case "Remove":
@@ -977,7 +1015,11 @@ public class Panel_Maker extends JPanel{
                     catch(Exception e){
                         app = "";
                     }
-                    sideButtonActionPerformed(evt, createRemovePanel(manager.createRemovePanel(panel,app)), createBotPanel((new String[] {"Done"}), returnpanel, 3));
+            try {
+                sideButtonActionPerformed(evt, createRemovePanel(manager.createRemovePanel(panel,app)), createBotPanel((new String[] {"Done"}), returnpanel, 3));
+            } catch (SQLException ex) {
+                Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+            }
                 }); break;
             case "Checkout":
                 inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
@@ -999,7 +1041,7 @@ public class Panel_Maker extends JPanel{
      * see CreateLoginPanel
      * @param evt 
      */
-    private void LoginButtonActionPerformed(ActionEvent evt) {
+    private void LoginButtonActionPerformed(ActionEvent evt) throws SQLException {
         if(admin){
             if(manager.checkLogin("user", "pass")){ //for debugging
             //if(manager.checkLogin(LoginTextField.getText(), String.valueOf(LoginPassField.getPassword()))){
@@ -1009,7 +1051,7 @@ public class Panel_Maker extends JPanel{
         }
         else{
             if(manager.checkLogin(LoginTextField.getText(), String.valueOf(LoginPassField.getPassword()))){
-                splitPaneH.setLeftComponent(createSidePanel(manager.getAllGroups()));
+                splitPaneH.setLeftComponent(createSidePanel(manager.getGroups(LoginTextField.getText())));
                 splitPaneV.setLeftComponent(createInfoPanel());
             }
         }
@@ -1061,11 +1103,11 @@ public class Panel_Maker extends JPanel{
      * @param evt
      * @param appList combobox to remove from
      */
-    private void removeAppButtonActionPerformed(ActionEvent evt, javax.swing.JComboBox<String> appList){
+    private void removeAppButtonActionPerformed(ActionEvent evt, javax.swing.JComboBox<String> appList) throws SQLException{
         appList.removeItem((String)appList.getSelectedItem());
         String app = (String)appList.getSelectedItem();
         System.out.println(app);
-        String[] creds = manager.getCredentials(app);
+        String[] creds = manager.getCredentials("MySQL Workshop");
         javax.swing.DefaultListModel listModel = new DefaultListModel();
         for(String item : creds){
             listModel.addElement(item);
@@ -1105,10 +1147,11 @@ public class Panel_Maker extends JPanel{
      * 
      * @param evt 
      */
-    private void AppPickContent(ActionEvent evt){
+    private void AppPickContent(ActionEvent evt) throws SQLException{
         javax.swing.JComboBox cb = (javax.swing.JComboBox)evt.getSource();
         String app = (String)cb.getSelectedItem();
-        String[] creds = manager.getCredentials(app);
+        System.out.println(app);
+        String[] creds = manager.getCredentials("MySQL Workshop");
         javax.swing.DefaultListModel listModel = new DefaultListModel();
         for(String item : creds){
             listModel.addElement(item);
@@ -1119,7 +1162,7 @@ public class Panel_Maker extends JPanel{
      * 
      * @param evt 
      */
-    private void AppPickUser(ActionEvent evt){
+    private void AppPickUser(ActionEvent evt) throws SQLException{
         javax.swing.JComboBox cb = (javax.swing.JComboBox)evt.getSource();
         String group = (String)cb.getSelectedItem();
         String[] users = manager.getUsers(group);
