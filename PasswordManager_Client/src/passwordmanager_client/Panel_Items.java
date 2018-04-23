@@ -5,7 +5,11 @@
  */
 package passwordmanager_client;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import javax.swing.DefaultListModel;
 
 /**
  *
@@ -36,10 +40,10 @@ public class Panel_Items {
         }
         return null;
     }
-    public void addFieldItem(String name, boolean pass){
+    public void addFieldItem(String name, String display, boolean pass){
         if(fieldList == null){
             fieldList = new fieldItem[1];
-            fieldList[0] = new fieldItem(name, pass);
+            fieldList[0] = new fieldItem(name,display, pass);
         }
         else {
             fieldItem[] tempList = new fieldItem[(fieldList.length + 1)];
@@ -48,7 +52,7 @@ public class Panel_Items {
                 tempList[x] = fieldList[x];
                 x++;
             }
-            tempList[x] = new fieldItem(name, pass);
+            tempList[x] = new fieldItem(name, display, pass);
             fieldList = tempList;
         }
     }
@@ -126,12 +130,45 @@ public class Panel_Items {
         public javax.swing.JTextField field;
         public javax.swing.JPasswordField password;
         public String name;
-        public fieldItem(String n, boolean pass){
+        public fieldItem(String n, String display, boolean pass){
             name = n;
-            if (pass) password = new javax.swing.JPasswordField();
+            if (pass){
+                password = new javax.swing.JPasswordField();
+                password.setText(display);
+                password.setForeground(new Color(150, 150, 150));
+                password.addFocusListener(new FocusListener(){  
+                    @Override  
+                    public void focusGained(FocusEvent e) {  
+                        password.setText("");  
+                        password.setForeground(new Color(50, 50, 50));  
+                    }  
+                    @Override  
+                    public void focusLost(FocusEvent e) { 
+                        if (String.valueOf(password.getPassword()).length() == 0) {  
+                            password.setText(display);  
+                            password.setForeground(new Color(150, 150, 150));  
+                        }  
+                    }  
+                });
+            }
             else{
                 field = new javax.swing.JTextField();
-                field.setText(name);
+                field.setText(display);
+                field.setForeground(new Color(150, 150, 150));
+                field.addFocusListener(new FocusListener(){  
+                    @Override  
+                    public void focusGained(FocusEvent e) {  
+                        field.setText("");  
+                        field.setForeground(new Color(50, 50, 50));  
+                    }  
+                    @Override  
+                    public void focusLost(FocusEvent e) { 
+                        if (field.getText().length() == 0) {  
+                            field.setText(display);  
+                            field.setForeground(new Color(150, 150, 150));  
+                        }  
+                    }  
+                });
             }
         }
         
@@ -151,15 +188,23 @@ public class Panel_Items {
     private class listItem {
         public javax.swing.JList jList1;
         public String name;
+        public DefaultListModel listModel;
         public listItem(String n, String[] items){
             name = n;
             jList1 = new javax.swing.JList<>();
             
-            jList1.setModel(new javax.swing.AbstractListModel<String>() {
+            listModel = new DefaultListModel();
+            for(String item : items){
+                listModel.addElement(item);
+            }
+            jList1.setModel(listModel);
+            
+            /*jList1.setModel(new javax.swing.AbstractListModel<String>() {
                 String[] strings = items;
                 public int getSize() { return strings.length; }
                 public String getElementAt(int i) { return strings[i]; }
             });
+            */
         }
     }
     private class labelItem {

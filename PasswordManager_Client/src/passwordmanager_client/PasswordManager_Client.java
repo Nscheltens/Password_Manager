@@ -20,7 +20,7 @@ public class PasswordManager_Client {
     private static Connection con;
     
     public PasswordManager_Client(){
-        Panel_Maker ClientPanel = new Panel_Maker(true, this);
+        Panel_Maker ClientPanel = new Panel_Maker(false, this);
     }
     
     public Panel_Items createGroupPanel() throws SQLException{
@@ -31,19 +31,21 @@ public class PasswordManager_Client {
         
         return select;
     }
-    public Panel_Items createContentPanel() throws SQLException{
+  
+    public Panel_Items createContentPanel(String group) throws SQLException{
         
         Panel_Items content = new Panel_Items("content");
-        content.addListItem("selectList",getCredentials("app"));
-        content.addComboboxItem("Content", getApps("IT Department"));
-        
+        String[] apps = getApps(group);
+        content.addListItem("selectList",getCredentials(apps[0]));
+        content.addComboboxItem("Content", apps);
         return content;
     }
     public Panel_Items createUsersPanel()throws SQLException{
         
         Panel_Items content = new Panel_Items("content");
-        content.addListItem("selectList",getUsers("group"));
-        content.addComboboxItem("Content", getAllGroups());
+        String[] groups = getAllGroups();
+        content.addListItem("selectList",getUsers(groups[0]));
+        content.addComboboxItem("Content", groups);
         
         return content;
     }
@@ -52,8 +54,8 @@ public class PasswordManager_Client {
         Panel_Items login = new Panel_Items("Login");
         
         login.addLabelItem("Login:","Login:");
-        login.addFieldItem("Username", false);
-        login.addFieldItem("Password", true);
+        login.addFieldItem("Username","Username", false);
+        login.addFieldItem("Password","Password", true);
         /*String query =
             "call login('"+user+"', '"+ pass+"')";*/
         return login;
@@ -66,26 +68,38 @@ public class PasswordManager_Client {
                 update.addLabelItem("Avaliable Apps","ListLabel");
                 update.addListItem("appList", getAllApps());
                 update.addListItem("inList", new String[] {});
-                update.addFieldItem("Group Name", false);
+                update.addFieldItem("Group Name", "Group Name", false);
                 
             case 1:
                 update.addLabelItem("Username","Fieldlabel");
                 update.addLabelItem("Avaliable Groups","ListLabel");
-                update.addListItem("appList", getAllApps());
+                update.addListItem("appList", getAllGroups());
                 update.addListItem("inList", new String[] {});
-                update.addFieldItem("Group Name", false);
+                update.addFieldItem("Group Name","Username", false);
+                update.addLabelItem("Password", "Password");
+                update.addFieldItem("Password Field","Password", false);
         }
+        /*
         update.addLabelItem("Group Name","llFieldlabel");
         update.addLabelItem("Avaliable Apps","llListLabel");
         update.addListItem("appList", getAllGroups());
         update.addListItem("inList", new String[] {});
-        update.addFieldItem("Group Name", false);
+        update.addFieldItem("Group Name", "Group Name", false);
+        */
         return update;
     }
-    public Panel_Items createRemovePanel(int panel)throws SQLException{
+    public Panel_Items createRemovePanel(int panel, , String app)throws SQLException{
+      
         Panel_Items remove = new Panel_Items("remove");
         remove.addLabelItem("Items to remove","Items to remove");
-        remove.addListItem("appList", getAllApps());
+        switch(panel){
+            case 0:
+                remove.addListItem("appList", getAllGroups());
+            case 1:
+                remove.addListItem("appList", getAllUsers());
+            case 2:
+                remove.addListItem("appList", getCredentials(app));
+        }
         remove.addListItem("inList", new String[] {});
         return remove;
     }
@@ -101,9 +115,9 @@ public class PasswordManager_Client {
         
         Panel_Items Newcred = new Panel_Items("NewCred");
         
-        Newcred.addFieldItem("username", false);
-        Newcred.addFieldItem("password", false);
-        Newcred.addFieldItem("CredName", false);
+        Newcred.addFieldItem("username", "username", false);
+        Newcred.addFieldItem("password", "password", false);
+        Newcred.addFieldItem("CredName", "CredName", false);
         
         Newcred.addLabelItem("Username","Userlabel");
         Newcred.addLabelItem("Password","Passlabel");
@@ -115,9 +129,7 @@ public class PasswordManager_Client {
         
         Panel_Items Newcred = new Panel_Items("NewCred");
         
-        Newcred.addFieldItem("FieldOne", false);
-        Newcred.addFieldItem("FieldTwo", false);
-        Newcred.addFieldItem("AppName", false);
+        Newcred.addFieldItem("AppName","Application Name", false);
         
         Newcred.addLabelItem("Username","Userlabel");
         Newcred.addLabelItem("Password","Passlabel");
@@ -126,6 +138,9 @@ public class PasswordManager_Client {
         return Newcred;
     }
     
+    public Panel_Items createInfoPanel(){
+        return null;
+    }
     /*public Panel_Items createCredPanel(){
         
         Panel_Items cred = new Panel_Items("content");
@@ -134,6 +149,22 @@ public class PasswordManager_Client {
         return cred;
     }*/
     
+    public boolean checkLogin(String user, String pass){
+        String username = getUsername();
+        String password = getPassword();
+        if(user.equals(username)){
+            if(pass.equals(password)){
+                return true;
+            }
+        }
+        return false;
+    }
+    private String getUsername(){
+        return "user";
+    }
+    private String getPassword(){
+        return "pass";
+    }
     
     private String[] getAllGroups()throws SQLException{
         String query =
@@ -219,6 +250,15 @@ public class PasswordManager_Client {
     public static void main(String[] args) throws NamingException {
         //Client_Panel ClientPanel = new Client_Panel();
         //Panel_Maker ClientPanel = new Panel_Maker(false);
+        final String secretKey = "ssshhhhhhhhhhh!!!!";
+     
+        String originalString = "howtodoinjava.com";
+        String encryptedString = AES.encrypt(originalString, secretKey) ;
+        String decryptedString = AES.decrypt(encryptedString, secretKey) ;
+     
+        System.out.println(originalString);
+        System.out.println(encryptedString);
+        System.out.println(decryptedString);
         PasswordManager_Client n = new PasswordManager_Client();
 
       
