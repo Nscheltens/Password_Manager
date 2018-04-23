@@ -182,6 +182,15 @@ public class PasswordManager_Client {
     public static void main(String[] args) {
         //Client_Panel ClientPanel = new Client_Panel();
         //Panel_Maker ClientPanel = new Panel_Maker(false);
+        final String secretKey = "ssshhhhhhhhhhh!!!!";
+     
+        String originalString = "howtodoinjava.com";
+        String encryptedString = AES.encrypt(originalString, secretKey) ;
+        String decryptedString = AES.decrypt(encryptedString, secretKey) ;
+     
+        System.out.println(originalString);
+        System.out.println(encryptedString);
+        System.out.println(decryptedString);
         PasswordManager_Client n = new PasswordManager_Client();
     }
     
