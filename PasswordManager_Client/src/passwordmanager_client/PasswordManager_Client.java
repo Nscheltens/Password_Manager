@@ -5,17 +5,25 @@
  */
 package passwordmanager_client;
 
+import java.sql.*;
+import java.util.ArrayList;
+import javax.activation.DataSource;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
 /**
  *
- * @author Nick Scheltens
+ * @author Nick Scheltens, Mark Jacobs
  */
 public class PasswordManager_Client {
+    private static Connection con;
     
     public PasswordManager_Client(){
         Panel_Maker ClientPanel = new Panel_Maker(true, this);
     }
     
-    public Panel_Items createGroupPanel(){
+    public Panel_Items createGroupPanel() throws SQLException{
         
         Panel_Items select = new Panel_Items("select");
         select.addLabelItem("Groups","Groups");
@@ -23,15 +31,15 @@ public class PasswordManager_Client {
         
         return select;
     }
-    public Panel_Items createContentPanel(){
+    public Panel_Items createContentPanel() throws SQLException{
         
         Panel_Items content = new Panel_Items("content");
         content.addListItem("selectList",getCredentials("app"));
-        content.addComboboxItem("Content", getApps("groups"));
+        content.addComboboxItem("Content", getApps("IT Department"));
         
         return content;
     }
-    public Panel_Items createUsersPanel(){
+    public Panel_Items createUsersPanel()throws SQLException{
         
         Panel_Items content = new Panel_Items("content");
         content.addListItem("selectList",getUsers("group"));
@@ -46,10 +54,11 @@ public class PasswordManager_Client {
         login.addLabelItem("Login:","Login:");
         login.addFieldItem("Username", false);
         login.addFieldItem("Password", true);
-        
+        /*String query =
+            "call login('"+user+"', '"+ pass+"')";*/
         return login;
     }
-    public Panel_Items createUpdatePanel(int panel){
+    public Panel_Items createUpdatePanel(int panel)throws SQLException{
         Panel_Items update = new Panel_Items("Update");
         switch (panel) {
             case 0:
@@ -73,14 +82,14 @@ public class PasswordManager_Client {
         update.addFieldItem("Group Name", false);
         return update;
     }
-    public Panel_Items createRemovePanel(int panel){
+    public Panel_Items createRemovePanel(int panel)throws SQLException{
         Panel_Items remove = new Panel_Items("remove");
         remove.addLabelItem("Items to remove","Items to remove");
         remove.addListItem("appList", getAllApps());
         remove.addListItem("inList", new String[] {});
         return remove;
     }
-    public Panel_Items createAppCredPanel(){
+    public Panel_Items createAppCredPanel() throws SQLException{
         Panel_Items appcred = new Panel_Items("AppCred");
         
         appcred.addListItem("credPanel", getCredentials("app"));
@@ -126,31 +135,91 @@ public class PasswordManager_Client {
     }*/
     
     
-    private String[] getAllGroups(){
-        return new String[] {"Group One", "Group Two", "Group Three"};
+    private String[] getAllGroups()throws SQLException{
+        String query =
+        "SELECT GroupName " +
+        "FROM groups ";
+
+    ArrayList<String> a = new ArrayList<String>();
+    Statement stmt = con.createStatement();
+    ResultSet rs = stmt.executeQuery(query);
+      while (rs.next()){
+       a.add(rs.getString("GroupName"));
+     }
+    return (String[]) a.toArray(new String[a.size()]);
     }
     private String[] getUsers(String group){
         return new String[] { "User 1", "User 2", "User 3", "User 4" };
     }
-    private String[] getGroups(String user){
-        return new String[] {"one", "Two", "THREE"};
-    }
-    private String[] getCredentials(String App){
+    private String[] getGroups(String user) throws SQLException{
+        String query =
+            "call display_group('"+user+"')";
+        ArrayList<String> a = new ArrayList<String>();
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
         
-        return new String[] { "cred 1", "cred 2", "cred 3", "cred 4" };
+        while (rs.next()){
+            a.add(rs.getString("GroupName"));
+            
+        }
+        return (String[]) a.toArray(new String[a.size()]);
     }
-    private String[] getApps(String group){
+    private String[] getCredentials(String App)throws SQLException{
+        String query =
+        "call display_apps('"+App+"')";
+
+    ArrayList<String> a = new ArrayList<String>();
+    Statement stmt = con.createStatement();
+    ResultSet rs = stmt.executeQuery(query);
+      while (rs.next()){
+       a.add(rs.getString("credID"));
+     }
+    return (String[]) a.toArray(new String[a.size()]);
+   }
         
-        return new String[] { "App 1", "App 2", "App 3", "App 4" };
-    }
-    private String[] getAllApps(){
-        return new String[] { "App 1", "App 2", "App 3", "App 4" };
+    private String[] getApps(String group) throws SQLException{
+        String query =
+        "call display_apps('"+group+"')";
+
+    ArrayList<String> a = new ArrayList<String>();
+    Statement stmt = con.createStatement();
+    ResultSet rs = stmt.executeQuery(query);
+      while (rs.next()){
+       a.add(rs.getString("Applications_AppName"));
+     }
+    return (String[]) a.toArray(new String[a.size()]);
+   }
+    
+    private String[] getAllApps()throws SQLException{
+        String query =
+        "SELECT AppName " +
+        "FROM applications ";
+
+    ArrayList<String> a = new ArrayList<String>();
+    Statement stmt = con.createStatement();
+    ResultSet rs = stmt.executeQuery(query);
+      while (rs.next()){
+       a.add(rs.getString("AppName"));
+     }
+    return (String[]) a.toArray(new String[a.size()]);
+        
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NamingException {
         //Client_Panel ClientPanel = new Client_Panel();
         //Panel_Maker ClientPanel = new Panel_Maker(false);
         PasswordManager_Client n = new PasswordManager_Client();
+
+      
+        try{  
+            con = DriverManager.getConnection(  
+            "jdbc:mysql://localhost:3306/mydb","root","toor");
+            if(con != null){
+            System.out.println("connected to database");
+            }
+        }catch (Exception e){
+            throw new IllegalStateException("not connected", e);
+        }
     }
-    
 }
+    
