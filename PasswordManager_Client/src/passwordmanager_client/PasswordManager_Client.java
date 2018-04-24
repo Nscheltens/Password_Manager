@@ -134,18 +134,11 @@ public class PasswordManager_Client {
         Newcred.addLabelItem("Application Name","Namelabel");
         
         return Newcred;
-    }
-    
+    } 
     public Panel_Items createInfoPanel(){
         return null;
     }
-    /*public Panel_Items createCredPanel(){
-        
-        Panel_Items cred = new Panel_Items("content");
-        cred.addListItem("GroupList", getCredentials("app"));
-        cred.addComboboxItem("Content", getAllGroups());
-        return cred;
-    }*/
+    
     
     public boolean checkLogin(String user, String pass) throws SQLException{
         String query =
@@ -167,9 +160,6 @@ public class PasswordManager_Client {
         }
         System.out.println("Wrong UserName or Password");
         return false;
-    }
-    private String getUsername(){
-        return "user";
     }
     private String getPassword(){
         return "pass";
@@ -236,8 +226,7 @@ public class PasswordManager_Client {
      }
     String[] creds = (String[]) a.toArray(new String[a.size()]);
     return creds;
-   }
-        
+   }       
     private String[] getApps(String group) throws SQLException{
         String query =
         "call display_apps('"+group+"')";
@@ -249,8 +238,7 @@ public class PasswordManager_Client {
        a.add(rs.getString("Applications_AppName"));
      }
     return (String[]) a.toArray(new String[a.size()]);
-   }
-    
+   }   
     private String[] getAllApps()throws SQLException{
         String query =
         "SELECT AppName " +
@@ -264,8 +252,7 @@ public class PasswordManager_Client {
      }
     return (String[]) a.toArray(new String[a.size()]);
         
-    }
-    
+    }   
     void removeCred(String CredName) throws SQLException{
         String query = 
              "call delete_credentials('"+CredName+"')";
@@ -316,6 +303,7 @@ public class PasswordManager_Client {
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(query);
     }
+    
     public static void main(String[] args) throws NamingException {
         //Client_Panel ClientPanel = new Client_Panel();
         //Panel_Maker ClientPanel = new Panel_Maker(false);
@@ -353,8 +341,7 @@ public class PasswordManager_Client {
        a.add(rs.getString("UserName"));
      }
     return (String[]) a.toArray(new String[a.size()]);
-    }
-    
+    }   
     String[] getProtectedCred(int credID) throws SQLException{
         String query =
         "call show_protected_cred('"+credID+"')";
