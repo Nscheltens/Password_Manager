@@ -18,9 +18,10 @@ import javax.naming.NamingException;
  */
 public class PasswordManager_Client {
     private static Connection con;
+    final static String secretKey = "Password";
     
     public PasswordManager_Client(){
-        Panel_Maker ClientPanel = new Panel_Maker(false, this);
+        Panel_Maker ClientPanel = new Panel_Maker(true, this);
     }
     
     public Panel_Items createGroupPanel() throws SQLException{
@@ -31,7 +32,6 @@ public class PasswordManager_Client {
         
         return select;
     }
-  
     public Panel_Items createContentPanel(String group) throws SQLException{
         
         Panel_Items content = new Panel_Items("content");
@@ -106,9 +106,9 @@ public class PasswordManager_Client {
     }
     public Panel_Items createAppCredPanel() throws SQLException{
         Panel_Items appcred = new Panel_Items("AppCred");
-        
-        appcred.addListItem("credPanel", getCredentials("app"));
-        appcred.addComboboxItem("App Select", getAllApps());
+        String[] apps = getAllApps();
+        appcred.addListItem("credPanel", getCredentials(apps[0]));
+        appcred.addComboboxItem("App Select", apps);
         
         return appcred;
     }
@@ -154,17 +154,15 @@ public class PasswordManager_Client {
         String query =
             "call login('"+user+"', '"+ pass+"')";
         
-        String username = getUsername();
+        String username = user;
         String password = getPassword();
         
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         while (rs.next()){
-            username = rs.getString("UserName");
             password = rs.getString("Password");
-     }
-        //String username = getUsername();
-        //String password = getPassword();
+        }
+        password = AES.decrypt(password, secretKey);
         if(user.equals(username)){
             if(pass.equals(password)){
                 return true;
@@ -183,7 +181,7 @@ public class PasswordManager_Client {
     String[] getAllGroups()throws SQLException{
         String query =
         "SELECT GroupName " +
-        "FROM groups ";
+        "FROM mydb.groups ";
 
     ArrayList<String> a = new ArrayList<String>();
     Statement stmt = con.createStatement();
@@ -197,7 +195,7 @@ public class PasswordManager_Client {
         String query =
         "Select UserName "+
         "From users "+
-        "Where idUsers = (Select Users_idUsers From users_has_groups Where Groups_GroupName = '"+group+"')";
+        "Where idUsers in (Select users_has_groups.Users_idUsers From users_has_groups Where users_has_groups.Groups_GroupName = '"+group+"')";
 
     ArrayList<String> a = new ArrayList<String>();
     Statement stmt = con.createStatement();
@@ -222,7 +220,7 @@ public class PasswordManager_Client {
     }
     String[] getCredentials(String App)throws SQLException{
         String query =
-        "call display_apps('"+App+"')";
+        "call display_creds('"+App+"')";
 
     ArrayList<String> a = new ArrayList<String>();
     Statement stmt = con.createStatement();
@@ -230,9 +228,8 @@ public class PasswordManager_Client {
       while (rs.next()){
        a.add(rs.getString("credID"));
      }
-     // String[] test = (String[]) a.toArray(new String[a.size()]);
-      //System.out.println([0]);
-    return (String[]) a.toArray(new String[a.size()]);
+    String[] creds = (String[]) a.toArray(new String[a.size()]);
+    return creds;
    }
         
     private String[] getApps(String group) throws SQLException{
@@ -263,20 +260,69 @@ public class PasswordManager_Client {
         
     }
     
+    void removeCred(String CredName) throws SQLException{
+        String query = 
+             "call delete_credentials('"+CredName+"')";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+    }
+    void removeApp(String AppName) throws SQLException{
+        String query = 
+             "call delete_app('"+AppName+"')";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+    }
+    void addApp(int appID, String appName)throws SQLException{
+        String query = 
+             "call new_app('"+appID+"', '"+appName+"')";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+    }
+    void addCred(int credID, String username, String Password, String appName) throws SQLException{
+        String encryptPassword = AES.encrypt(Password,secretKey);
+        String query = 
+             "call new_credential('"+credID+"', '"+username+"', '"+encryptPassword+"', '"+appName+"')";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+    }
+    void addUser(int UserID, String username, String password) throws SQLException{
+        String encryptPassword = AES.encrypt(password,secretKey);
+        String query = 
+             "call new_user('"+UserID+"', '"+username+"', '"+encryptPassword+"')";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+    }
+    void addUserToGroup(int UserID, String groupName) throws SQLException{
+        String query = 
+             "call insert_user_in_group('"+UserID+"', '"+groupName+"')";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+    }
+    void addGroup(int GroupID, String groupName) throws SQLException{
+        String query = 
+             "call new_group('"+GroupID+"', '"+groupName+"')";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+    }
+    void addAppToGroup(String groupName, String appName) throws SQLException{
+        String query = 
+             "call insert_group_in_app('"+groupName+"', '"+appName+"')";
+        Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery(query);
+    }
     public static void main(String[] args) throws NamingException {
         //Client_Panel ClientPanel = new Client_Panel();
         //Panel_Maker ClientPanel = new Panel_Maker(false);
-        final String secretKey = "ssshhhhhhhhhhh!!!!";
-     
-        String originalString = "howtodoinjava.com";
+        
+        String originalString = "password";
         String encryptedString = AES.encrypt(originalString, secretKey) ;
         String decryptedString = AES.decrypt(encryptedString, secretKey) ;
      
         System.out.println(originalString);
         System.out.println(encryptedString);
         System.out.println(decryptedString);
+        
         PasswordManager_Client n = new PasswordManager_Client();
-
       
         try{  
             con = DriverManager.getConnection(  
