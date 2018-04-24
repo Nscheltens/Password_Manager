@@ -18,7 +18,7 @@ public class PasswordManager_Client {
     final static String secretKey = "Password";
     
     public PasswordManager_Client(){
-        Panel_Maker ClientPanel = new Panel_Maker(true, this);
+        Panel_Maker ClientPanel = new Panel_Maker(false, this);
     }
     
     public Panel_Items createGroupPanel() throws SQLException{
