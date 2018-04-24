@@ -1069,7 +1069,7 @@ public class Panel_Maker extends JPanel{
             //if(manager.checkLogin("user", "pass")){ //for debugging
             if(manager.checkLogin(LoginTextField.getText(), String.valueOf(LoginPassField.getPassword()))){
                 splitPaneH.setLeftComponent(createSidePanel(new String[] {"Credentials", "Users", "Groups"}));
-                splitPaneV.setLeftComponent(createInfoPanel());
+                //splitPaneV.setLeftComponent(createInfoPanel());
             }
         }
         else{

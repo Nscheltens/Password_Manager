@@ -368,7 +368,7 @@ public class PasswordManager_Client {
       while (rs.next()){
        String userName = rs.getString("UserName");
        String passWord = rs.getString("Password");
-       
+       passWord = AES.decrypt(passWord, secretKey);
        a.add("UserName: "+userName+"\n\nPassword: "+passWord);
      }
     
