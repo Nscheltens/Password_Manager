@@ -965,7 +965,7 @@ public class Panel_Maker extends JPanel{
             case "Credentials":
                 inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
             try {
-                JPanel panel = createAppCredPanel(manager.createAppCredPanel());
+                JPanel panel = createAppCredPanel(manager.createAppCredPanel(admin));
                 sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"New", "Remove"}), panel, 2));
             } catch (SQLException ex) {
                 Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
@@ -983,7 +983,7 @@ public class Panel_Maker extends JPanel{
             default:
                 inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
             try {
-                JPanel panel = createContentPanel(manager.createContentPanel(name), true);
+                JPanel panel = createContentPanel(manager.createContentPanel(name, admin), true);
                 sideButtonActionPerformed(evt, panel, createBotPanel((new String[] {"Checkout"}), panel, 4));
             } catch (SQLException ex) {
                 Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
@@ -1039,7 +1039,7 @@ public class Panel_Maker extends JPanel{
                         app = "";
                     }
             try {
-                sideButtonActionPerformed(evt, createRemovePanel(manager.createRemovePanel(panel,app)), createBotPanel((new String[] {"Done"}), returnpanel, 3));
+                sideButtonActionPerformed(evt, createRemovePanel(manager.createRemovePanel(panel,app,admin)), createBotPanel((new String[] {"Done"}), returnpanel, 3));
             } catch (SQLException ex) {
                 Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1075,7 +1075,7 @@ public class Panel_Maker extends JPanel{
         else{
             if(manager.checkLogin(LoginTextField.getText(), String.valueOf(LoginPassField.getPassword()))){
                 splitPaneH.setLeftComponent(createSidePanel(manager.getGroups(LoginTextField.getText())));
-                splitPaneV.setLeftComponent(createInfoPanel());
+                //splitPaneV.setLeftComponent(createInfoPanel());
             }
         }
     }
@@ -1137,7 +1137,7 @@ public class Panel_Maker extends JPanel{
         String app = (String)appList.getSelectedItem();
         String[] creds = null;
         try {
-            creds = manager.getCredentials(app);
+            creds = manager.getCredentials(app,admin);
         } catch (SQLException ex) {
             Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -1243,7 +1243,7 @@ public class Panel_Maker extends JPanel{
         javax.swing.JComboBox cb = (javax.swing.JComboBox)evt.getSource();
         String app = (String)cb.getSelectedItem();
         System.out.println(app);
-        String[] creds = manager.getCredentials(app);
+        String[] creds = manager.getCredentials(app, admin);
         javax.swing.DefaultListModel listModel = new DefaultListModel();
         for(String item : creds){
             listModel.addElement(item);

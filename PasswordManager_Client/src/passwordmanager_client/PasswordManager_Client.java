@@ -7,9 +7,6 @@ package passwordmanager_client;
 
 import java.sql.*;
 import java.util.ArrayList;
-import javax.activation.DataSource;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 /**
@@ -32,12 +29,12 @@ public class PasswordManager_Client {
         
         return select;
     }
-    public Panel_Items createContentPanel(String group) throws SQLException{
+    public Panel_Items createContentPanel(String group,boolean admin) throws SQLException{
         
         Panel_Items content = new Panel_Items("content");
         String[] apps = getApps(group);
         //System.out.println(apps[0]);
-        content.addListItem("selectList",getCredentials(apps[0]));
+        content.addListItem("selectList",getCredentials(apps[0], admin));
         content.addComboboxItem("Content", apps);
         return content;
     }
@@ -89,7 +86,7 @@ public class PasswordManager_Client {
         */
         return update;
     }
-    public Panel_Items createRemovePanel(int panel, String app)throws SQLException{
+    public Panel_Items createRemovePanel(int panel, String app, boolean admin)throws SQLException{
       
         Panel_Items remove = new Panel_Items("remove");
         remove.addLabelItem("Items to remove","Items to remove");
@@ -99,15 +96,15 @@ public class PasswordManager_Client {
             case 1:
                 remove.addListItem("appList", getAllUsers());
             case 2:
-                remove.addListItem("appList", getCredentials(app));
+                remove.addListItem("appList", getCredentials(app, admin));
         }
         remove.addListItem("inList", new String[] {});
         return remove;
     }
-    public Panel_Items createAppCredPanel() throws SQLException{
+    public Panel_Items createAppCredPanel(boolean admin) throws SQLException{
         Panel_Items appcred = new Panel_Items("AppCred");
         String[] apps = getAllApps();
-        appcred.addListItem("credPanel", getCredentials(apps[0]));
+        appcred.addListItem("credPanel", getCredentials(apps[0], admin));
         appcred.addComboboxItem("App Select", apps);
         
         return appcred;
@@ -220,7 +217,7 @@ public class PasswordManager_Client {
         }
         return (String[]) a.toArray(new String[a.size()]);
     }
-    String[] getCredentials(String App)throws SQLException{
+    String[] getCredentials(String App, boolean admin)throws SQLException{
         String query =
         "call display_creds('"+App+"')";
 
@@ -231,7 +228,7 @@ public class PasswordManager_Client {
           int id = rs.getInt("credID");
           int inUse = rs.getInt("inUse");
           String available;
-          if(inUse == 0)
+          if(inUse == 0 || admin)
               a.add(rs.getString("credID"));
           else{}
               
