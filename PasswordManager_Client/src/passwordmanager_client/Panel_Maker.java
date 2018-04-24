@@ -8,6 +8,7 @@ package passwordmanager_client;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.sql.SQLException;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
@@ -374,8 +375,13 @@ public class Panel_Maker extends JPanel{
         jButton2.setText("Remove");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeAppButtonActionPerformed(evt, AppPick);
+            }
+        });
+        AppPick.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 try {
-                    removeAppButtonActionPerformed(evt,AppPick);
+                    AppPickContent(evt);
                 } catch (SQLException ex) {
                     Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -598,7 +604,7 @@ public class Panel_Maker extends JPanel{
         jButton5.setText("Create");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                createButtonActionPerformed(evt, removeList, jTextField3);
+                createButtonActionPerformed(evt, removeList, jTextField3, jTextField4);
             }
         });
 
@@ -1003,11 +1009,11 @@ public class Panel_Maker extends JPanel{
                 switch(panel){
                     case 1:
                         inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-            try {
-                sideButtonActionPerformed(evt, createUserUpdatePanel(manager.createUpdatePanel(panel)), createBotPanel((new String[] {"Done", "Cancel"}), returnpanel, panel));
-            } catch (SQLException ex) {
-                Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                        try {
+                            sideButtonActionPerformed(evt, createUserUpdatePanel(manager.createUpdatePanel(panel)), createBotPanel((new String[] {"Done", "Cancel"}), returnpanel, panel));
+                        } catch (SQLException ex) {
+                            Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+                         }
                         }); break;
                     case 2:
                         inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
@@ -1015,11 +1021,11 @@ public class Panel_Maker extends JPanel{
                         }); break;
                     default:
                         inButton.addActionListener((java.awt.event.ActionEvent evt) -> {
-            try {
-                sideButtonActionPerformed(evt, createUpdatePanel(manager.createUpdatePanel(panel)), createBotPanel((new String[] {"Done", "Cancel"}), returnpanel, panel));
-            } catch (SQLException ex) {
-                Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                        try {
+                            sideButtonActionPerformed(evt, createUpdatePanel(manager.createUpdatePanel(panel)), createBotPanel((new String[] {"Done", "Cancel"}), returnpanel, panel));
+                        } catch (SQLException ex) {
+                            Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                         }); break;
                 }
             case "Remove":
@@ -1060,9 +1066,9 @@ public class Panel_Maker extends JPanel{
      */
     private void LoginButtonActionPerformed(ActionEvent evt) throws SQLException {
         if(admin){
-            if(manager.checkLogin("user", "pass")){ //for debugging
-            //if(manager.checkLogin(LoginTextField.getText(), String.valueOf(LoginPassField.getPassword()))){
-                splitPaneH.setLeftComponent(createSidePanel(new String[] {"Credentials", "Users", "Groups", "Client View"}));
+            //if(manager.checkLogin("user", "pass")){ //for debugging
+            if(manager.checkLogin(LoginTextField.getText(), String.valueOf(LoginPassField.getPassword()))){
+                splitPaneH.setLeftComponent(createSidePanel(new String[] {"Credentials", "Users", "Groups"}));
                 splitPaneV.setLeftComponent(createInfoPanel());
             }
         }
@@ -1120,11 +1126,22 @@ public class Panel_Maker extends JPanel{
      * @param evt
      * @param appList combobox to remove from
      */
-    private void removeAppButtonActionPerformed(ActionEvent evt, javax.swing.JComboBox<String> appList) throws SQLException{
-        appList.removeItem((String)appList.getSelectedItem());
+    private void removeAppButtonActionPerformed(ActionEvent evt, javax.swing.JComboBox<String> appList){
+        String rm = (String)appList.getSelectedItem();
+        try {
+            manager.removeApp(rm);
+        } catch (SQLException ex) {
+            Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        appList.removeItem(rm);
         String app = (String)appList.getSelectedItem();
-        System.out.println(app);
-        String[] creds = manager.getCredentials(app);
+        String[] creds = null;
+        try {
+            creds = manager.getCredentials(app);
+        } catch (SQLException ex) {
+            Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         javax.swing.DefaultListModel listModel = new DefaultListModel();
         for(String item : creds){
             listModel.addElement(item);
@@ -1148,16 +1165,74 @@ public class Panel_Maker extends JPanel{
      * @param jList1 list to remove from
      */
     private void removeListButtonActionPerformed(ActionEvent evt, javax.swing.JList jList1){
+        
+        javax.swing.DefaultListModel appMod = (DefaultListModel)jList1.getModel();
+        for(Object part : appMod.toArray()){
+            try {
+                manager.removeCred(part.toString());
+            } catch (SQLException ex) {
+                Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         jList1.setModel(new javax.swing.DefaultListModel());
     }
-    
     private void createButtonActionPerformed(ActionEvent evt, javax.swing.JList jList1, javax.swing.JTextField name){
+        String groupName = name.getText();
+        int randomNum = ThreadLocalRandom.current().nextInt(1, 101);
+        try {
+            manager.addGroup(randomNum, groupName);
+        } catch (SQLException ex) {
+            Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        javax.swing.DefaultListModel appMod = (DefaultListModel)jList1.getModel();
+        for(Object part : appMod.toArray()){
+            try {
+                manager.addAppToGroup(groupName, part.toString());
+            } catch (SQLException ex) {
+                Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
         
     }
+    private void createButtonActionPerformed(ActionEvent evt, javax.swing.JList jList1, javax.swing.JTextField name, javax.swing.JTextField password){
+        String username = name.getText();
+        String pass = password.getText();
+        int randomNum = ThreadLocalRandom.current().nextInt(1, 101);
+        javax.swing.DefaultListModel groupMod = (DefaultListModel)jList1.getModel();
+        try {
+            manager.addUser(randomNum, username, pass);
+        } catch (SQLException ex) {
+            Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for(Object part : groupMod.toArray()){
+            try {
+                manager.addUserToGroup(randomNum, part.toString());
+            } catch (SQLException ex) {
+                Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
     private void createButtonActionPerformed(ActionEvent evt, javax.swing.JTextField field1, javax.swing.JTextField field2, javax.swing.JTextField field3){
+        String username = field1.getText();
+        int randomNum = ThreadLocalRandom.current().nextInt(1, 101);
+        String password = field3.getText();
+        String AppName = AppPick.getSelectedItem().toString();
+        try {
+            manager.addCred(randomNum, username, password, AppName);
+        } catch (SQLException ex) {
+            Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
     private void createButtonActionPerformed(ActionEvent evt, javax.swing.JTextField field1){
+        String text = field1.getText();
+        int randomNum = ThreadLocalRandom.current().nextInt(1, 101);
+        try {
+            manager.addApp(randomNum, text);
+        } catch (SQLException ex) {
+            Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         
     }
     /**
@@ -1169,7 +1244,6 @@ public class Panel_Maker extends JPanel{
         String app = (String)cb.getSelectedItem();
         System.out.println(app);
         String[] creds = manager.getCredentials(app);
-        System.out.println(app);
         javax.swing.DefaultListModel listModel = new DefaultListModel();
         for(String item : creds){
             listModel.addElement(item);
