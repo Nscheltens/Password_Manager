@@ -203,6 +203,8 @@ public class PasswordManager_Client {
       while (rs.next()){
        a.add(rs.getString("UserName"));
      }
+     
+
       return (String[]) a.toArray(new String[a.size()]);
     }
     String[] getGroups(String user) throws SQLException{
@@ -226,7 +228,14 @@ public class PasswordManager_Client {
     Statement stmt = con.createStatement();
     ResultSet rs = stmt.executeQuery(query);
       while (rs.next()){
-       a.add(rs.getString("credID"));
+          int id = rs.getInt("credID");
+          int inUse = rs.getInt("inUse");
+          String available;
+          if(inUse == 0)
+              a.add(rs.getString("credID"));
+          else{}
+              
+       
      }
     String[] creds = (String[]) a.toArray(new String[a.size()]);
     return creds;
@@ -348,5 +357,21 @@ public class PasswordManager_Client {
      }
     return (String[]) a.toArray(new String[a.size()]);
     }
-}
     
+    String[] getProtectedCred(int credID) throws SQLException{
+        String query =
+        "call show_protected_cred('"+credID+"')";
+
+    ArrayList<String> a = new ArrayList<String>();
+    Statement stmt = con.createStatement();
+    ResultSet rs = stmt.executeQuery(query);
+      while (rs.next()){
+       String userName = rs.getString("UserName");
+       String passWord = rs.getString("Password");
+       
+       a.add("UserName: "+userName+"\n\nPassword: "+passWord);
+     }
+    
+    return (String[]) a.toArray(new String[a.size()]);
+    }
+}

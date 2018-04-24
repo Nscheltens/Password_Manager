@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package passwordmanager_client;
 
 import java.awt.*;
@@ -16,7 +21,7 @@ import javax.swing.JSplitPane;
 
 /**
  *
- * @author Cole
+ * @author Nick Scheltens
  */
 public class Panel_Maker extends JPanel{
     
@@ -253,7 +258,7 @@ public class Panel_Maker extends JPanel{
      * make dynamic sizable
      * @return 
      */
-    private JPanel createInfoPanel(){
+    private JPanel createInfoPanel() {
         
         JPanel Pan = new javax.swing.JPanel();
         
@@ -264,6 +269,18 @@ public class Panel_Maker extends JPanel{
         passTextArea.setEditable(false);
         passTextArea.setColumns(20);
         passTextArea.setRows(5);
+        
+        try {
+            String[] cred;
+            String credId = aList.getSelectedValue().toString();
+            int credID = Integer.parseInt(credId);
+            cred = manager.getProtectedCred(credID);
+            passTextArea.setText(cred[0]);
+        } catch (SQLException ex) {
+            Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+
         jScrollPane1.setViewportView(passTextArea);
         
         groupLabel.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
@@ -1118,13 +1135,13 @@ public class Panel_Maker extends JPanel{
         }
         appList.removeItem(rm);
         String app = (String)appList.getSelectedItem();
-        //System.out.println(app);
         String[] creds = null;
         try {
             creds = manager.getCredentials(app);
         } catch (SQLException ex) {
             Logger.getLogger(Panel_Maker.class.getName()).log(Level.SEVERE, null, ex);
         }
+
         javax.swing.DefaultListModel listModel = new DefaultListModel();
         for(String item : creds){
             listModel.addElement(item);
