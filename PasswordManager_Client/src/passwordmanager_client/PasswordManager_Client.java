@@ -20,7 +20,7 @@ public class PasswordManager_Client {
     private static Connection con;
     
     public PasswordManager_Client(){
-        Panel_Maker ClientPanel = new Panel_Maker(false, this);
+        Panel_Maker ClientPanel = new Panel_Maker(true, this);
     }
     
     public Panel_Items createGroupPanel() throws SQLException{
@@ -205,6 +205,8 @@ public class PasswordManager_Client {
       while (rs.next()){
        a.add(rs.getString("UserName"));
      }
+     
+
       return (String[]) a.toArray(new String[a.size()]);
     }
     String[] getGroups(String user) throws SQLException{
@@ -222,17 +224,25 @@ public class PasswordManager_Client {
     }
     String[] getCredentials(String App)throws SQLException{
         String query =
-        "call display_apps('"+App+"')";
+        "call display_creds('"+App+"')";
 
     ArrayList<String> a = new ArrayList<String>();
     Statement stmt = con.createStatement();
     ResultSet rs = stmt.executeQuery(query);
       while (rs.next()){
-       a.add(rs.getString("credID"));
+          int id = rs.getInt("credID");
+          int inUse = rs.getInt("inUse");
+          String available;
+          if(inUse == 0)
+              a.add(rs.getString("credID"));
+          else{}
+              
+       
      }
      // String[] test = (String[]) a.toArray(new String[a.size()]);
-      //System.out.println([0]);
-    return (String[]) a.toArray(new String[a.size()]);
+    System.out.println(a.size());
+    String[] test =(String[]) a.toArray(new String[a.size()]); 
+    return test;
    }
         
     private String[] getApps(String group) throws SQLException{
@@ -302,5 +312,21 @@ public class PasswordManager_Client {
      }
     return (String[]) a.toArray(new String[a.size()]);
     }
-}
     
+    String[] getProtectedCred(int credID) throws SQLException{
+        String query =
+        "call show_protected_cred('"+credID+"')";
+
+    ArrayList<String> a = new ArrayList<String>();
+    Statement stmt = con.createStatement();
+    ResultSet rs = stmt.executeQuery(query);
+      while (rs.next()){
+       String userName = rs.getString("UserName");
+       String passWord = rs.getString("Password");
+       
+       a.add("UserName: "+userName+"\n\nPassword: "+passWord);
+     }
+    
+    return (String[]) a.toArray(new String[a.size()]);
+    }
+}
